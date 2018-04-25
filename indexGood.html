@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- D3.js -->
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script type='text/javascript' src='accidents.js'></script>
+ 
+  <style>
+    
+    html { font-size: 62.5%; } 
+
+		body {
+		  	font-size: 1rem;
+		  	font-family: 'Open Sans', sans-serif;
+		  	font-weight: 400;
+		  	fill: #8C8C8C;
+		  	text-align: center;
+		}
+
+		.timeLabel, .dayLabel {
+		    font-size: 1.6rem;
+		    fill: #AAAAAA;
+		    font-weight: 300;
+		}
+
+		text.axis-workweek, text.axis-worktime {
+		    fill: #404040;
+		    font-weight: 400;
+		}
+
+		.title {
+		    font-size: 2.8rem;
+		    fill: #4F4F4F;
+		    font-weight: 300;
+		}
+
+		.subtitle {
+		    font-size: 1.4rem;
+		    fill: #AAAAAA;
+		    font-weight: 300;
+		}
+		  
+		.credit {
+		    font-size: 1.2rem;
+		    fill: #AAAAAA;
+		    font-weight: 400;
+		}
+
+		.axis path, .axis tick, .axis line {
+		      fill: none;
+		      stroke: none;
+		  }
+
+          text {
+		      font-size: 1.2rem;
+		      fill: #AAAAAA;
+		      font-weight: 400;
+		}
+
+		.legendTitle {
+		      font-size: 1.6rem;
+		      fill: #4F4F4F;
+		      font-weight: 300;
+		}
+
+
+  </style>
+</head>
+
+<body>
+<div id="trafficAccidents"></div>
+
+<script>
+
+///////////////////////////////////////////////////////////////////////////
+//////////////////// Random test array data ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////	
+
+const financeRandom = [
+        {ticker:1,day:1,change:152},
+        {ticker:1,day:2,change:141},
+        {ticker:1,day:3,change:134},
+		{ticker:1,day:4,change:127},
+        {ticker:1,day:5,change:141},
+		{ticker:1,day:6,change:127},
+        {ticker:1,day:7,change:141},
+        {ticker:2,day:1,change:134},
+		{ticker:2,day:2,change:127},
+        {ticker:2,day:3,change:141},
+        {ticker:2,day:4,change:134},
+		{ticker:2,day:5,change:134},
+		{ticker:2,day:6,change:141},
+        {ticker:2,day:7,change:165}
+    ];
+
+const getRandomFloat = (min, max) => Math.random() * (max - min) + min;
+
+const newArray = financeRandom.map(index => ({
+	ticker: index.ticker, day: index.day, change: getRandomFloat(-2, 2) }));
+
+console.table(newArray);
+
+///////////////////////////////////////////////////////////////////////////
+//////////////////// Set up and initiate svg containers ///////////////////
+///////////////////////////////////////////////////////////////////////////	
+
+const days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+const times = d3.range(24);
+
+const margin = {
+	top: 170,
+	right: 50,
+	bottom: 70,
+	left: 50
+};
+
+const width = Math.max(Math.min(window.innerWidth, 1000), 500) - margin.left - margin.right - 20;
+const gridSize = Math.floor(width / times.length);
+const height = gridSize * (days.length+2);
+
+const svg = d3.select('#trafficAccidents')
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+///////////////////////////////////////////////////////////////////////////
+//////////////////////////// Draw Heatmap /////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+// ripped off from Nadieh Bremer http://bl.ocks.org/nbremer/62cf60e116ae821c06602793d265eaf6
+
+var colorScale = d3.scaleLinear()
+	.domain([0, d3.max(accidents, function(d) {return d.count; })/2, d3.max(accidents, function(d) {return d.count; })])
+    .range(["#145eff","#fff472", "#82f3ff",]);
+    
+
+var heatMap = svg.selectAll(".hour")
+    .data(accidents)
+    .enter().append("rect")
+    .attr("x", function(d) { return (d.hour - 1) * gridSize; })
+    .attr("y", function(d) { return (d.day - 1) * gridSize; })
+
+    .attr("width", gridSize)
+    .attr("height", gridSize)
+    .style("stroke", "white")
+    .style("stroke-opacity", 0.9)
+    .style("fill", function(d) { return colorScale(d.count); });
+
+
+
+
+
+    const accidentsTest = [
+        {day:2,hour:1,count:127},
+        {day:4,hour:1,count:141},
+        {day:1,hour:1,count:134},
+        {day:5,hour:1,count:174}
+	];
+        
+	
+</script>
+</body>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- D3.js -->
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script type='text/javascript' src='accidents.js'></script>
+ 
+  <style>
+    
+    html { font-size: 62.5%; } 
+
+		body {
+		  	font-size: 1rem;
+		  	font-family: 'Open Sans', sans-serif;
+		  	font-weight: 400;
+		  	fill: #8C8C8C;
+		  	text-align: center;
+		}
+
+		.timeLabel, .dayLabel {
+		    font-size: 1.6rem;
+		    fill: #AAAAAA;
+		    font-weight: 300;
+		}
+
+		text.axis-workweek, text.axis-worktime {
+		    fill: #404040;
+		    font-weight: 400;
+		}
+
+		.title {
+		    font-size: 2.8rem;
+		    fill: #4F4F4F;
+		    font-weight: 300;
+		}
+
+		.subtitle {
+		    font-size: 1.4rem;
+		    fill: #AAAAAA;
+		    font-weight: 300;
+		}
+		  
+		.credit {
+		    font-size: 1.2rem;
+		    fill: #AAAAAA;
+		    font-weight: 400;
+		}
+
+		.axis path, .axis tick, .axis line {
+		      fill: none;
+		      stroke: none;
+		  }
+
+          text {
+		      font-size: 1.2rem;
+		      fill: #AAAAAA;
+		      font-weight: 400;
+		}
+
+		.legendTitle {
+		      font-size: 1.6rem;
+		      fill: #4F4F4F;
+		      font-weight: 300;
+		}
+
+
+  </style>
+</head>
+
+<body>
+<div id="trafficAccidents"></div>
+
+<script>
+
+// ripped off from Nadieh Bremer http://bl.ocks.org/nbremer/62cf60e116ae821c06602793d265eaf6
+
+///////////////////////////////////////////////////////////////////////////
+//////////////////// Random test array data ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////	
+
+const months = d3.range(36);
+console.log(months);
+
+const getRandomFloat = (min, max) => Math.random() * (max - min) + min;
+
+
+const ticker1Array = months.map((currentValue, index) => (
+    {
+        ticker: 1,
+        month: currentValue + 1,
+        change: getRandomFloat(-2, 2)
+    }
+));
+
+const ticker2Array = months.map((currentValue, index) => (
+    {
+        ticker: 2,
+        month: currentValue + 1,
+        change: getRandomFloat(-2, 2)
+    }
+));
+
+const ticker3Array = months.map((currentValue, index) => (
+    {
+        ticker: 3,
+        month: currentValue + 1,
+        change: getRandomFloat(-2, 2)
+    }
+));
+
+const ticker4Array = months.map((currentValue, index) => (
+    {
+        ticker: 4,
+        month: currentValue + 1,
+        change: getRandomFloat(-2, 2)
+    }
+));
+
+const ticker5Array = months.map((currentValue, index) => (
+    {
+        ticker: 5,
+        month: currentValue + 1,
+        change: getRandomFloat(-2, 2)
+    }
+));
+
+const ticker6Array = months.map((currentValue, index) => (
+    {
+        ticker: 6,
+        month: currentValue + 1,
+        change: getRandomFloat(-2, 2)
+    }
+));
+
+const ticker7Array = months.map((currentValue, index) => (
+    {
+        ticker: 7,
+        month: currentValue + 1,
+        change: getRandomFloat(-2, 2)
+    }
+));
+
+const ticker8Array = months.map((currentValue, index) => (
+    {
+        ticker: 8,
+        month: currentValue + 1,
+        change: getRandomFloat(-2, 2)
+    }
+));
+
+const randomFinanceData = ticker1Array.concat(ticker2Array, ticker3Array,ticker4Array,ticker5Array, ticker6Array, ticker7Array, ticker8Array)
+console.table(randomFinanceData);
+
+
+///////////////////////////////////////////////////////////////////////////
+//////////////////// Set up and initiate svg containers ///////////////////
+///////////////////////////////////////////////////////////////////////////	
+
+const days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+const times = d3.range(36);
+
+const margin = {
+	top: 20,
+	right: 10,
+	bottom: 70,
+	left: 30
+};
+
+const width = window.innerWidth - margin.left - margin.right;
+const gridSize = Math.floor(width / times.length);
+const height = gridSize * (days.length+2);
+
+const svg = d3.select('#trafficAccidents')
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+///////////////////////////////////////////////////////////////////////////
+//////////////////////////// Draw Heatmap /////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+// ripped off from Nadieh Bremer http://bl.ocks.org/nbremer/62cf60e116ae821c06602793d265eaf6
+
+var colorScale = d3.scaleLinear()
+	.domain([d3.min(randomFinanceData, function(d) {return d.change; }),0, d3.max(randomFinanceData, function(d) {return d.change; })])
+    .range(["#ff0000","#ffffff","#00ff61"]);
+
+var shrinkScale = d3.scaleLinear()
+    .domain([d3.min(randomFinanceData, function(d) {return d.change; }),0, d3.max(randomFinanceData, function(d) {return d.change; })])
+    .range([1, .5, 1]);
+    
+
+var heatMap = svg.selectAll(".hour")
+    .data(randomFinanceData)
+    .enter().append("rect")
+    .attr("x", function(d) { return (d.month - 1) * gridSize; })
+    .attr("y", function(d) { return (d.ticker - 1) * gridSize; })
+
+    .attr("width", gridSize )
+    .attr("height",gridSize )
+    .style("stroke", "white")
+    .style("stroke-opacity", 0.9)
+    .style("fill", function(d) { return colorScale(d.change); });
+
+//,function(d) {return gridSize * shrinkScale(d.change); })
+    
+console.log(shrinkScale(-1.9))
+</script>
+</body>
